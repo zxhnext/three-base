@@ -7,10 +7,15 @@
 import { defineComponent, ref, onMounted } from 'vue';
 import * as THREE from 'three';
 import Stats from 'stats.js';
+// 导入dat.gui
+import * as dat from 'dat.gui';
+// import { color } from 'dat.gui';
+// 导入动画库
+import gsap from 'gsap';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 export default defineComponent({
-  name: 'Animation',
+  name: 'Gui',
   setup() {
     const sceneDiv = ref<null | HTMLElement>(null);
     const statsDiv = ref<null | HTMLElement>(null);
@@ -39,6 +44,41 @@ export default defineComponent({
     const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
     // 将几何体添加到场景中
     scene.add(cube);
+
+    const gui = new dat.GUI();
+    gui
+      .add(cube.position, 'x')
+      .min(0)
+      .max(5)
+      .step(0.01)
+      .name('移动x轴')
+      .onChange((value: number) => {
+        console.log('值被修改：', value);
+      })
+      .onFinishChange((value: number) => {
+        console.log('完全停下来:', value);
+      });
+    //   修改物体的颜色
+    const params = {
+      color: '#0000ff',
+      fn: () => {
+        //   让立方体运动起来
+        gsap.to(cube.position, {
+          x: 5, duration: 2, yoyo: true, repeat: -1,
+        });
+      },
+    };
+    gui.addColor(params, 'color').onChange((value: string) => {
+      console.log('值被修改：', value);
+      cube.material.color.set(value);
+    });
+    // 设置选项框
+    gui.add(cube, 'visible').name('是否显示');
+
+    const folder = gui.addFolder('设置立方体');
+    folder.add(cube.material, 'wireframe');
+    // 设置按钮点击触发某个事件
+    folder.add(params, 'fn').name('立方体运动');
 
     // 设置光源
     const point = new THREE.PointLight(0xffffff);
@@ -69,34 +109,15 @@ export default defineComponent({
     const stats = new Stats();
     stats.showPanel(1); // 0: fps, 1: ms
 
-    // 设置时钟
-    const clock = new THREE.Clock();
-
     // 使用渲染器，通过相机将场景渲染进来
-    const render = (time: number) => {
+    const render = () => {
       stats.update();
-      const t = (time / 1000) % 5;
-      // 获取时钟运行的总时长
-      const longTime = clock.getElapsedTime();
-      const t2 = longTime % 5;
-      // 修改位置
-      // cube.position.set(5, 0, 0);
-      cube.position.x = t * 1;
-      // cube.translateX(0.05);
-      // 旋转
-      cube.rotation.x = t2 * 1;
-      // cube.rotateX(0.05);
-      // 缩放
-      // cube.scale.x = 5;
-      if (cube.position.x > 5) {
-        cube.position.x = 0;
-      }
       renderer.render(scene, camera);
       //   渲染下一帧的时候就会调用render函数
       requestAnimationFrame(render);
     };
 
-    render(0);
+    render();
 
     onMounted(() => {
       (sceneDiv.value as HTMLElement).appendChild(renderer.domElement);

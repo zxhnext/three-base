@@ -30,6 +30,21 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Animation',
     component: () => import(/* webpackChunkName: "FirstScene" */ '../views/01-basic-scene/03-animation.vue'),
   },
+  {
+    path: '/basic/gasp',
+    name: 'Gasp',
+    component: () => import(/* webpackChunkName: "FirstScene" */ '../views/01-basic-scene/04-gasp.vue'),
+  },
+  {
+    path: '/basic/gui',
+    name: 'Gui',
+    component: () => import(/* webpackChunkName: "FirstScene" */ '../views/01-basic-scene/05-gui.vue'),
+  },
+  {
+    path: '/basic/screen-size-change',
+    name: 'screenSizeChange',
+    component: () => import(/* webpackChunkName: "FirstScene" */ '../views/01-basic-scene/06-screen-size-change.vue'),
+  },
 ];
 
 const router = createRouter({

@@ -1,19 +1,16 @@
 <template>
   <div class="scene" ref="sceneDiv"></div>
-  <div class="stats" ref="statsDiv"></div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, onMounted } from 'vue';
 import * as THREE from 'three';
-import Stats from 'stats.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 export default defineComponent({
-  name: 'Animation',
+  name: 'ScreenSizeChange',
   setup() {
     const sceneDiv = ref<null | HTMLElement>(null);
-    const statsDiv = ref<null | HTMLElement>(null);
     // 1、创建场景
     const scene = new THREE.Scene();
 
@@ -57,6 +54,15 @@ export default defineComponent({
     // 将webgl渲染的canvas内容添加到body
     // document.body.appendChild(renderer.domElement);
 
+    // 使用渲染器，通过相机将场景渲染进来
+    const render = () => {
+      renderer.render(scene, camera);
+      //   渲染下一帧的时候就会调用render函数
+      requestAnimationFrame(render);
+    };
+
+    render();
+
     // 创建轨道控制器
     const controls = new OrbitControls(camera, renderer.domElement);
     console.log('controls', controls);
@@ -65,56 +71,31 @@ export default defineComponent({
     const axesHelper = new THREE.AxesHelper(5);
     scene.add(axesHelper);
 
-    // 监控性能
-    const stats = new Stats();
-    stats.showPanel(1); // 0: fps, 1: ms
-
-    // 设置时钟
-    const clock = new THREE.Clock();
-
-    // 使用渲染器，通过相机将场景渲染进来
-    const render = (time: number) => {
-      stats.update();
-      const t = (time / 1000) % 5;
-      // 获取时钟运行的总时长
-      const longTime = clock.getElapsedTime();
-      const t2 = longTime % 5;
-      // 修改位置
-      // cube.position.set(5, 0, 0);
-      cube.position.x = t * 1;
-      // cube.translateX(0.05);
-      // 旋转
-      cube.rotation.x = t2 * 1;
-      // cube.rotateX(0.05);
-      // 缩放
-      // cube.scale.x = 5;
-      if (cube.position.x > 5) {
-        cube.position.x = 0;
-      }
-      renderer.render(scene, camera);
-      //   渲染下一帧的时候就会调用render函数
-      requestAnimationFrame(render);
-    };
-
-    render(0);
-
     onMounted(() => {
       (sceneDiv.value as HTMLElement).appendChild(renderer.domElement);
-      (statsDiv.value as HTMLElement).appendChild(stats.dom);
+    });
+
+    // 监听画面变化，更新渲染画面
+    window.addEventListener('resize', () => {
+      //   console.log("画面变化了");
+      // 更新摄像头
+      camera.aspect = window.innerWidth / window.innerHeight;
+      //   更新摄像机的投影矩阵
+      camera.updateProjectionMatrix();
+
+      //   更新渲染器
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      //   设置渲染器的像素比
+      renderer.setPixelRatio(window.devicePixelRatio);
     });
 
     return {
       sceneDiv,
-      statsDiv,
     };
   },
 });
 </script>
 
 <style lang="less" scoped>
-.stats {
-  position: absolute;
-  top: 0;
-  left: 0;
-}
+
 </style>
