@@ -8,9 +8,11 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@types/stats.js": "^0.17.0",
     "@types/three": "^0.143.0",
     "dat.gui": "^0.7.9",
     "gsap": "^3.10.4",
+    "stats.js": "^0.17.0",
     "three": "^0.143.0",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0",

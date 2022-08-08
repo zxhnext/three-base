@@ -16,9 +16,19 @@ const routes: Array<RouteRecordRaw> = [
   //   component: () => import(/* webpackChunkName: "about" */ '../views/About.vue'),
   // },
   {
-    path: '/base/first-scene',
+    path: '/basic/first-scene',
     name: 'FirstScene',
-    component: () => import(/* webpackChunkName: "FirstScene" */ '../views/01-base-scene/01-first-scene.vue'),
+    component: () => import(/* webpackChunkName: "FirstScene" */ '../views/01-basic-scene/01-first-scene.vue'),
+  },
+  {
+    path: '/basic/orbit-controls',
+    name: 'OrbitControls',
+    component: () => import(/* webpackChunkName: "FirstScene" */ '../views/01-basic-scene/02-orbit-controls.vue'),
+  },
+  {
+    path: '/basic/animation',
+    name: 'Animation',
+    component: () => import(/* webpackChunkName: "FirstScene" */ '../views/01-basic-scene/03-animation.vue'),
   },
 ];
 
